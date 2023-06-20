@@ -10,7 +10,7 @@ userSchema = mongoose.Schema({
     },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Meeting'
+        require:true
     },
     joined:{
         type:Boolean,

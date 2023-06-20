@@ -1,10 +1,10 @@
 const meetingService = require('../services/meeting.service')
 const {MeetingPayloadEnum} = require('./meeting-payload.enum')
 
-function joinMeeting(meetingId,socket,payload,meetingServer){
+function joinMeeting(meetingId,socket,meetingServer,payload){
     return Promise(async (resolve,reject)=>{
         try {
-            const {userId,name}= payload
+            const {userId,name}= payload.data
             const isMeetingPresent = await meetingService.isMeetingPresent(meetingId)
             if(!isMeetingPresent) sendMessage(socket,{
                 type:MeetingPayloadEnum.NOT_FOUND

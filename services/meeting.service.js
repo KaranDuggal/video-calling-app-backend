@@ -56,7 +56,7 @@ function checkMeetingExist(meetingId){
             if(!meeting){
                 throw 'Invalid Meeting Id'
             }
-            resolve()
+            resolve(meeting)
         } catch (err) {
             reject(err)
         }

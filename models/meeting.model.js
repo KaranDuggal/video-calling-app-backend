@@ -7,7 +7,7 @@ meetingSchema = mongoose.Schema({
     },
     hostName:{
         type:String,
-        require: true
+        require: false
     },
     startTime:{
         type:Date,

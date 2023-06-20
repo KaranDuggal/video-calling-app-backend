@@ -21,27 +21,30 @@ function handleMessage(meetingId,socket,message,meetingServer) {
     }else payload = message
 
     switch (payload.type) {
-        case MeetingPayloadEnum.JOINED_MEETING:
-            meetingHelper.joinMeeting(meetingId,socket,payload,meetingServer)
+        case MeetingPayloadEnum.JOIN_MEETING:
+            meetingHelper.joinMeeting(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.CONNECTION_REQUEST:
-            meetingHelper.forwardConnectionRequest(meetingId,socket,payload,meetingServer)
+            meetingHelper.forwardConnectionRequest(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.OFFER_SDP:
-            meetingHelper.forwardOfferSDP(meetingId,socket,payload,meetingServer)
+            meetingHelper.forwardOfferSDP(meetingId,socket,meetingServer,payload)
+            break;
+        case MeetingPayloadEnum.ICECANDIDATE:
+            meetingHelper.forwardIceCandidate(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.ANSWER_SDP:
-            meetingHelper.forwardAnswerSDP(meetingId,socket,payload,meetingServer)
+            meetingHelper.forwardAnswerSDP(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.LEAVE_MEETING:
-            meetingHelper.userLeft(meetingId,socket,payload,meetingServer)
+            meetingHelper.userLeft(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.END_MEETING:
-            meetingHelper.endMeeting(meetingId,socket,payload,meetingServer)
+            meetingHelper.endMeeting(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.VIDEO_TOGGLE:
         case MeetingPayloadEnum.AUDIO_TOGGLE:
-            meetingHelper.forwardEvent(meetingId,socket,payload,meetingServer)
+            meetingHelper.forwardEvent(meetingId,socket,meetingServer,payload)
             break;
         case MeetingPayloadEnum.UNKNOWN:
             break;
