@@ -6,7 +6,7 @@ exports.startMeeting = async (req,res,next)=>{
         const model = {
             hostId,
             hostName,
-            startTime:Date.now
+            startTime:Date.now()
         }
         const data = await meetingService.startMeeting(model)
         res.status(200).json({message:'success',data})

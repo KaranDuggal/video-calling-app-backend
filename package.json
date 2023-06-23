@@ -4,13 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:local": "NODE_ENV=local nodemon ./bin/www.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
+    "localtunnel": "^2.0.2",
     "mongoose": "^7.3.0",
+    "morgan": "^1.10.0",
     "socket.io": "^4.6.2"
   }
 }
