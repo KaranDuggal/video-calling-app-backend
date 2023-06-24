@@ -13,7 +13,7 @@ function getAllMeetingUsers(meetingId){
 function startMeeting(params){
     return new Promise(async (resolve,reject)=>{
         try {
-            const meeting = await meetingModel.create(params)
+            const meeting = await meetingModel.create(params);
             resolve(meeting)
         } catch (err) {
             reject(err)
@@ -23,13 +23,10 @@ function startMeeting(params){
 function joinMeeting(params){
     return new Promise(async (resolve,reject)=>{
         try {
-            const user = await userModel.create(params)
-            await meetingModel.findOneAndUpdate({id:params.meetingId},{
-                $addToSet:{
-                    meetingUsers:user
-                }
-            })
-            resolve(user)
+            const user = new userModel(params);
+            const saveUser = await user.save()
+            await meetingModel.findOneAndUpdate({_id:params.meetingId}, { $addToSet : {'meetingUsers':user}})
+            resolve(saveUser)
         } catch (err) {
             reject(err)
         }
@@ -39,11 +36,11 @@ function joinMeeting(params){
 function isMeetingPresent(meetingId){
     return new Promise(async (resolve,reject)=>{
         try {
-            const meeting = await meetingModel.findById(meetingId).populate('meetingUser', 'User')
+            const meeting = await meetingModel.findById(meetingId).populate('meetingUsers')
             if(!meeting){
                 throw 'Invalid Meeting Id'
             }
-            resolve()
+            resolve(meeting)
         } catch (err) {
             reject(err)
         }
@@ -52,6 +49,7 @@ function isMeetingPresent(meetingId){
 function checkMeetingExist(meetingId){
     return new Promise(async (resolve,reject)=>{
         try {
+            console.log('------------------ check Run ----------------');
             if(!ObjectId.isValid(meetingId)){throw 'Invalid Meeting Id'}
             const meeting = await meetingModel.findById(meetingId,{'hostId':1,'hostName':1,'startTime':1}).populate('meetingUsers')
             if(!meeting){
@@ -63,11 +61,11 @@ function checkMeetingExist(meetingId){
         }
     })
 }
-function getMeetingUsers(params){
+function getMeetingUser(params){
     return new Promise(async (resolve,reject)=>{
         try {
             const {meetingId,userId} = params
-            const users = await userModel.find(meetingId,userId)
+            const users = await userModel.find({meetingId,userId})
             resolve(users)
         } catch (err) {
             reject(err)
@@ -78,7 +76,7 @@ function getMeetingUsers(params){
 function updateMeetingUser(params){
     return new Promise(async (resolve,reject)=>{
         try {
-            const {meetingId,userId} = params
+            const {userId} = params
             const users = await userModel.updateOne({userId},{$set:params},{new:true})
             resolve(users)
         } catch (err) {
@@ -105,7 +103,7 @@ module.exports = {
     joinMeeting,
     isMeetingPresent,
     checkMeetingExist,
-    getMeetingUsers,
+    getMeetingUser,
     updateMeetingUser,
     setUserBySocketId,
 }
