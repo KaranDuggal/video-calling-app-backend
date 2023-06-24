@@ -29,31 +29,29 @@ async function joinMeeting(meetingId,socket,meetingServer,payload){
         console.log('err', err)
     }
 }
-function forwardConnectionRequest(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId, otherUserId,name} = payload.data
-            const model = {
-                meetingId,
-                userId:otherUserId
-            }
-            const user = await meetingService.getMeetingUser(model)
-            if(user){
-                const sendPayload = JSON.stringify({
-                    type: MeetingPayloadEnum.CONNECTION_REQUEST,
-                    data:{
-                        userId,
-                        name,
-                        ...payload.data
-                    }
-                })
-                meetingServer.to(user.socketId).emit('message',sendPayload)
-            }
-            resolve()
-        } catch (err) {
-            reject(err)
+async function forwardConnectionRequest(meetingId,socket, meetingServer,payload){
+    try {
+        const {userId, otherUserId,name} = payload.data
+        const model = {
+            meetingId,
+            userId:otherUserId
         }
-    })
+        const user = await meetingService.getMeetingUser(model)
+        if(user){
+            const sendPayload = JSON.stringify({
+                type: MeetingPayloadEnum.CONNECTION_REQUEST,
+                data:{
+                    userId,
+                    name,
+                    ...payload.data
+                }
+            })
+            meetingServer.to(user.socketId).emit('message',sendPayload)
+        }
+        resolve()
+    } catch (err) {
+            reject(err)
+    }
 }
 
 function forwardIceCandidate(meetingId,socket, meetingServer,payload){
@@ -83,113 +81,103 @@ function forwardIceCandidate(meetingId,socket, meetingServer,payload){
 }
 
 function forwardOfferSDP(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId ,sdp} = payload.data
-            const model = {
-                meetingId,
-                userId:otherUserId
-            }
-            const user = meetingService.getMeetingUsers(model)
-            if(user){
-                const sendPayload = JSON.stringify({
-                    type: MeetingPayloadEnum.OFFER_SDP,
-                    data:{
-                        userId,
-                        sdp
-                    }
-                })
-                meetingServer.to(user.socketId).emit('message',sendPayload)
-            }
-            resolve(true)
-        } catch (err) {
-            reject(err)
+    try {
+        const {userId ,sdp} = payload.data
+        const model = {
+            meetingId,
+            userId:otherUserId
         }
-    })
+        const user = meetingService.getMeetingUsers(model)
+        if(user){
+            const sendPayload = JSON.stringify({
+                type: MeetingPayloadEnum.OFFER_SDP,
+                data:{
+                    userId,
+                    sdp
+                }
+            })
+            meetingServer.to(user.socketId).emit('message',sendPayload)
+        }
+        resolve(true)
+    } catch (err) {
+            reject(err)
+    }
 }
 
 function forwardAnswerSDP(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId, otherUserId,sdp} = payload.data
-            const model = {
+    try {
+        const {userId, otherUserId,sdp} = payload.data
+        const model = {
                 meetingId,
                 userId:otherUserId
-            }
-            const user = meetingService.getMeetingUsers(model)
-            if(user){
-                const sendPayload = JSON.stringify({
-                    type: MeetingPayloadEnum.ANSWER_SDP,
-                    data:{
-                        userId,
-                        sdp
-                    }
-                })
-                meetingServer.to(user.socketId).emit('message',sendPayload)
-            }
-            resolve()
-        } catch (err) {
-            reject(err)
         }
-    })
+        const user = meetingService.getMeetingUsers(model)
+        if(user){
+            const sendPayload = JSON.stringify({
+                type: MeetingPayloadEnum.ANSWER_SDP,
+                data:{
+                    userId,
+                    sdp
+                }
+            })
+            meetingServer.to(user.socketId).emit('message',sendPayload)
+        }
+        resolve()
+    } catch (err) {
+            reject(err)
+    }
 }
 
 function userLeft(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId} = payload.data
-            broadcastUsers(meetingId,socket,meetingServer,{
-                type:MeetingPayloadEnum.USER_LEFT,
-                data:{
-                    userId,
-                }
-            })
-            resolve()
-        } catch (err) {
+    try {
+        const {userId} = payload.data
+        broadcastUsers(meetingId,socket,meetingServer,{
+            type:MeetingPayloadEnum.USER_LEFT,
+            data:{
+                userId,
+            }
+        })
+        resolve()
+    } catch (err) {
             reject(err)
-        }
-    })
+    }
 }
 
-function endMeeting(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId} = payload.data
-            broadcastUsers(meetingId,socket,meetingServer,{
-                type:MeetingPayloadEnum.MEETING_ENDED,
-                data:{
+async function endMeeting(meetingId,socket, meetingServer,payload){
+    try {
+        const {userId} = payload.data
+        broadcastUsers(meetingId,socket,meetingServer,{
+            type:MeetingPayloadEnum.MEETING_ENDED,
+            data:{
                     userId,
-                }
-            })
-            const allUsers =await meetingService.getAllMeetingUsers(meetingId)
-            for (let i = 0; i < allUsers.length; i++) {
-                const meetingUser = allUsers[i];
-                await meetingServer.socket.connected[meetingUser.socketId].disconnect()
-                
             }
-            resolve()
-        } catch (err) {
-            reject(err)
+        })
+        const allUsers =await meetingService.getAllMeetingUsers(meetingId)
+        for (let i = 0; i < allUsers.length; i++) {
+            const meetingUser = allUsers[i];
+            await meetingServer.socket.connected[meetingUser.socketId].disconnect()
+            
         }
-    })
+        resolve()
+    } catch (err) {
+            reject(err)
+    }
 }
 
 function forwardEvent(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId} = payload.data
-            broadcastUsers(meetingId,socket,meetingServer,{
-                type:payload.type,
-                data:{
-                    userId,
-                    ...payload.data
-                }
-            })
-            resolve()
-        } catch (err) {
+    try {
+        const {userId} = payload.data
+        broadcastUsers(meetingId,socket,meetingServer,{
+            type:payload.type,
+            data:{
+                userId,
+                ...payload.data
+            }
+        })
+        resolve()
+    } catch (err) {
             reject(err)
-        }
-    })
+    }
 }
 
 

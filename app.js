@@ -20,9 +20,7 @@ global.publicDirPath = path.join(__dirname,'./public/')
 require('./db/config').configure(mongoose);
 
 const app = express();
-console.log(' ---------------------------------- ENV ---------------------------------- ')
 // console.log(env)
-console.log(' ------------------------------------------------------------------------- ') 
 // if(env.Logs === 'true'){
     // eslint-disable-next-line no-unused-vars
     logger.token('body', (req,res) => JSON.stringify(req.body, 0, 2));
