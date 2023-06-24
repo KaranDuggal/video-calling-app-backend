@@ -2,7 +2,7 @@ const meetingService = require('../services/meeting.service')
 const {MeetingPayloadEnum} = require('./meeting-payload.enum')
 
 function joinMeeting(meetingId,socket,meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId,name}= payload.data
             const isMeetingPresent = await meetingService.isMeetingPresent(meetingId)
@@ -29,7 +29,7 @@ function joinMeeting(meetingId,socket,meetingServer,payload){
     })
 }
 function forwardConnectionRequest(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId, otherUserId,name} = payload.data
             const model = {
@@ -56,7 +56,7 @@ function forwardConnectionRequest(meetingId,socket, meetingServer,payload){
 }
 
 function forwardIceCandidate(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId, otherUserId,candidate} = payload.data
             const model = {
@@ -83,7 +83,7 @@ function forwardIceCandidate(meetingId,socket, meetingServer,payload){
 }
 
 function forwardOfferSDP(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId, otherUserId,sdp} = payload.data
             const model = {
@@ -109,7 +109,7 @@ function forwardOfferSDP(meetingId,socket, meetingServer,payload){
 }
 
 function forwardAnswerSDP(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId, otherUserId,sdp} = payload.data
             const model = {
@@ -135,7 +135,7 @@ function forwardAnswerSDP(meetingId,socket, meetingServer,payload){
 }
 
 function userLeft(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId} = payload.data
             broadcastUsers(meetingId,socket,meetingServer,{
@@ -152,7 +152,7 @@ function userLeft(meetingId,socket, meetingServer,payload){
 }
 
 function endMeeting(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId} = payload.data
             broadcastUsers(meetingId,socket,meetingServer,{
@@ -175,7 +175,7 @@ function endMeeting(meetingId,socket, meetingServer,payload){
 }
 
 function forwardEvent(meetingId,socket, meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const {userId} = payload.data
             broadcastUsers(meetingId,socket,meetingServer,{
@@ -194,7 +194,7 @@ function forwardEvent(meetingId,socket, meetingServer,payload){
 
 
 function addUser(socket,{meetingId,userId,name}){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             const result = meetingService.getAllMeetingUsers({meetingId,userId})
             if(!result){
@@ -220,7 +220,7 @@ function addUser(socket,{meetingId,userId,name}){
     })
 }
 function sendMessage(socket,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             socket.send(JSON.stringify(payload))
             resolve()
@@ -231,7 +231,7 @@ function sendMessage(socket,payload){
 }
 
 function broadcastUsers(meeting,socket,meetingServer,payload){
-    return Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         try {
             socket.broadcast.emit('message',JSON.stringify(payload))
             resolve()
