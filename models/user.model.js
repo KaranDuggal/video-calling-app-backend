@@ -9,7 +9,7 @@ userSchema = mongoose.Schema({
         ref:'Meeting'
     },
     userId:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:String,
         require:true
     },
     joined:{
