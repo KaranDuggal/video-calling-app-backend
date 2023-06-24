@@ -9,7 +9,7 @@ const localtunnel = require('localtunnel');
 var app = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
-
+const {initMeetingServer} = require('../meeting-server')
 /**
  * Get port from environment and store in Express.
  */
@@ -91,7 +91,7 @@ function onListening() {
   debug('Listening on ' + bind);
   console.log(`server running at ${port}`);
 }
-
+initMeetingServer(server);
 if(false){
   const tunnel = localtunnel(port, { subdomain: 'indo-quiz'}, (err, tunnel) => {
     if(err === null){
