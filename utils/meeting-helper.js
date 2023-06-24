@@ -55,29 +55,27 @@ async function forwardConnectionRequest(meetingId,socket, meetingServer,payload)
 }
 
 function forwardIceCandidate(meetingId,socket, meetingServer,payload){
-    return new Promise(async (resolve,reject)=>{
-        try {
-            const {userId, otherUserId,candidate} = payload.data
-            const model = {
-                meetingId,
-                userId:otherUserId
-            }
-            const user = meetingService.getMeetingUser(model)
-            if(user){
-                const sendPayload = JSON.stringify({
-                    type: MeetingPayloadEnum.ICECANDIDATE,
-                    data:{
-                        userId,
-                        candidate,
-                    }
-                })
-                meetingServer.to(user.socketId).emit('message',sendPayload)
-            }
-            resolve()
-        } catch (err) {
-            reject(err)
+    try {
+        const {userId, otherUserId,candidate} = payload.data
+        const model = {
+            meetingId,
+            userId:otherUserId
         }
-    })
+        const user = meetingService.getMeetingUser(model)
+        if(user){
+            const sendPayload = JSON.stringify({
+                type: MeetingPayloadEnum.ICECANDIDATE,
+                data:{
+                    userId,
+                    candidate,
+                }
+            })
+            meetingServer.to(user.socketId).emit('message',sendPayload)
+        }
+        resolve()
+    } catch (err) {
+            reject(err)
+    }
 }
 
 function forwardOfferSDP(meetingId,socket, meetingServer,payload){
