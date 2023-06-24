@@ -9,7 +9,7 @@ const MeetingPayloadEnum = {
     LEAVE_MEETING:'leave-meeting',
     END_MEETING:'end-meeting',
     USER_LEFT:'user-left',
-    MEETING_ENDED:'meeting-end',
+    MEETING_ENDED:'meeting-ended',
     ICECANDIDATE:'icecandidate',
     VIDEO_TOGGLE:'video-toggle',
     AUDIO_TOGGLE:'audio-toggle',
