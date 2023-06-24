@@ -1,25 +1,14 @@
 const meetingHelper = require('./utils/meeting-helper')
 const {MeetingPayloadEnum} = require('./utils/meeting-payload.enum')
 
-function parseMessage(message) {
-    try {
-        const payload = JSON.parse(message)
-        return payload
-    } catch (err) {
-        return {type:MeetingPayloadEnum.UNKNOWN}
-    }
-}
 function listenMessage(meetingId,socket,meetingServer) {
     socket.on('message',(message)=>{
         return handleMessage(meetingId,socket,message,meetingServer)
     })
 }
 function handleMessage(meetingId,socket,message,meetingServer) {
-    let payload = ''
-    if(typeof message === 'string'){
-        payload = parseMessage(message)
-    }else payload = message
-
+    let payload = typeof message === 'string' ? JSON.parse(message) : message;
+    console.log('payload --> ', payload)
     switch (payload.type) {
         case MeetingPayloadEnum.JOIN_MEETING:
             meetingHelper.joinMeeting(meetingId,socket,meetingServer,payload)
@@ -56,7 +45,9 @@ function handleMessage(meetingId,socket,message,meetingServer) {
 function initMeetingServer(server) {
     const meetingServer = require('socket.io')(server)
     meetingServer.on('connection',socket=>{
+        console.log(' ----------------------------- Socket connect ------------------------------ ');
         const meetingId = socket.handshake.query.id
+        console.log('meetingId', meetingId)
         listenMessage(meetingId,socket,meetingServer)
     })
 }
